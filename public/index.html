@@ -1,48 +1,40 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VesperAI</title>
-<style>
-*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 0,#1b1a1c 0,#060a18 55%);color:#f3efe8;font-family:Inter,system-ui,sans-serif;display:flex;flex-direction:column}
-header{display:flex;align-items:center;gap:10px;padding:12px 24px;font:22px Georgia,serif}
-.orb{border-radius:50%;background:radial-gradient(circle at 35% 30%,#f7a46a,#e8704f 60%,#a8453a);box-shadow:0 0 40px #e8704f55}
-header .orb{width:28px;height:28px}
-main{flex:1;max-width:760px;width:100%;margin:0 auto;padding:0 20px;display:flex;flex-direction:column;align-items:center}
-#hero{text-align:center;margin-top:12vh}#hero .orb{width:80px;height:80px;margin:0 auto 40px}
-h1{font:400 52px Georgia,serif;margin:0 0 18px}#hero p{color:#8a93a8;max-width:420px;margin:0 auto 40px;line-height:1.5}
-.sug{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%}
-.sug button{background:#0b1020;border:1px solid #232a40;color:#e8e4dc;border-radius:16px;padding:20px 16px;text-align:left;font-size:15px;cursor:pointer}
-.sug button:hover{border-color:#e8704f}
-#chat{width:100%;padding-bottom:120px}.msg{margin:20px 0;line-height:1.65}.user{color:#f7a46a}
-.card{background:#0b1020;border:1px solid #232a40;border-radius:16px;padding:18px}
-.badge{font-size:12px;margin-bottom:8px;color:#7bd88f}.badge.no{color:#f0b35a}
-.src{font-size:13px;color:#8a93a8;margin-top:12px}.src a{color:#8fb4ff;display:block;margin-top:4px;text-decoration:none}
-form{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);width:min(760px,calc(100% - 40px));display:flex;gap:10px;align-items:center;background:#0b1020;border:1px solid #232a40;border-radius:24px;padding:10px}
-input[type=text]{flex:1;background:none;border:0;outline:0;color:#f3efe8;font-size:16px;padding:8px}
-form button{background:#6b4f2e;color:#fff;border:0;border-radius:20px;padding:12px 22px;cursor:pointer}
-#att{background:#0b1020;border:1px solid #232a40;color:#aab;border-radius:50%;width:40px;height:40px;padding:0}
-@media(max-width:600px){.sug{grid-template-columns:1fr}h1{font-size:36px}}
-</style></head><body>
-<header><div class="orb"></div>VesperAI</header>
+<title>VesperAI — Ask. Verify. Know.</title>
+<meta name="description" content="VesperAI searches the live web, cross-checks five sources and only tells you what it can back up.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head><body>
+<div class="glow"></div>
+<nav><a class="brand" href="/"><span class="orb sm"></span>VesperAI</a>
+<div class="links"><a href="#how">How it works</a><a href="#trust">Why trust it</a><button id="newchat" hidden>New chat</button></div></nav>
+
 <main>
-<section id="hero"><div class="orb"></div><h1>Ask. Verify. Know.</h1>
-<p>VesperAI searches the live web, cross-checks several sources and only tells you what it can back up.</p>
+<section id="hero">
+<span class="pill">● Live web · 5-source verification</span>
+<span class="orb xl"></span>
+<h1>Ask. Verify. <em>Know.</em></h1>
+<p class="sub">VesperAI searches the live web, cross-checks several sources and only tells you what it can back up.</p>
 <div class="sug">
 <button>What's the latest on Mars exploration?</button><button>Is intermittent fasting healthy?</button>
-<button>Who won the most recent World Series?</button><button>How does inflation affect savings?</button></div></section>
-<div id="chat"></div></main>
-<form id="f"><button type="button" id="att" title="Attach an image (images aren't analyzed yet)">📎</button>
-<input type="text" id="q" placeholder="Ask anything, paste a link, or attach an image…" autocomplete="off"><button>Ask</button></form>
-<script>
-const chat=document.getElementById('chat'),q=document.getElementById('q');
-const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-document.querySelectorAll('.sug button').forEach(b=>b.onclick=()=>{q.value=b.textContent;f.requestSubmit()});
-att.onclick=()=>alert('Image analysis is not supported yet. Describe the image in text or paste a link.');
-f.onsubmit=async e=>{e.preventDefault();const t=q.value.trim();if(!t)return;q.value='';hero.remove?.call(hero);
-chat.insertAdjacentHTML('beforeend',`<div class="msg user">${esc(t)}</div>`);
-const m=document.createElement('div');m.className='msg card';m.textContent='Searching and cross-checking sources…';chat.append(m);m.scrollIntoView();
-try{const r=await(await fetch('/api/ask',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:t})})).json();
-if(r.error)throw new Error(r.error);
-m.innerHTML=`<div class="badge ${r.verified?'':'no'}">${r.verified?'✓ Verified · '+esc(r.confidence):'Unverified'}</div>${esc(r.answer)}
-<div class="src">Sources${r.sources.map(s=>`<a href="${esc(s.url)}" target="_blank" rel="noopener">[${s.n}] ${esc(s.title||s.url)}</a>`).join('')}</div>`;
-}catch(err){m.textContent='Something went wrong: '+err.message}};
-</script></body></html>
+<button>Who won the most recent World Series?</button><button>How does inflation affect savings?</button></div>
+
+<div id="how" class="grid">
+<div class="feat"><b>1</b><h3>Search</h3><p>Queries multiple search engines and gathers the top pages from the live web.</p></div>
+<div class="feat"><b>2</b><h3>Cross-check</h3><p>Reads five different websites and compares what each one claims.</p></div>
+<div class="feat"><b>3</b><h3>Answer</h3><p>Shares only claims that multiple sources agree on, with citations.</p></div></div>
+
+<div id="trust" class="trust"><h2>Built not to guess</h2>
+<p>If the sources don't agree, VesperAI says so instead of making something up. Every answer links to the pages behind it, and verified knowledge is refreshed in the background.</p></div>
+</section>
+<section id="chat" aria-live="polite"></section>
+</main>
+
+<form id="f"><button type="button" id="att" title="Attach image" aria-label="Attach image">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.5l-8.6 8.6a5.5 5.5 0 01-7.8-7.8l9-9a3.7 3.7 0 115.2 5.2l-9 9a1.8 1.8 0 01-2.6-2.6l8.3-8.3"/></svg></button>
+<input type="text" id="q" placeholder="Ask anything, paste a link, or attach an image…" autocomplete="off" maxlength="1000">
+<button class="send" aria-label="Ask">Ask</button></form>
+<footer>VesperAI can make mistakes. Check the cited sources for anything important.</footer>
+<script src="app.js"></script>
+</body></html>
