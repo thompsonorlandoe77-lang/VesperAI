@@ -1,0 +1,8 @@
+{
+  "name": "vesperai",
+  "version": "1.0.0",
+  "description": "Ask. Verify. Know. Web-verified answers from 5 cross-checked sources.",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" }
+}
